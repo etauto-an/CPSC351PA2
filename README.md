@@ -1,10 +1,10 @@
 # CPSC 351 Operating System Concepts Programming Assignment – Sleeping Teaching Assistant
 
 ## Team Members:
-Name Section Email 
-Name Section Email 
-Name Section Email 
-Name Section Email 
+- Name Section Email 
+- Name Section Email 
+- Name Section Email 
+- Name Section Email 
 
 # Software Requirements
 
