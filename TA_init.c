@@ -1,3 +1,4 @@
+// This is the initial starter code without separation
 
 #include <pthread.h>    //Create POSIX threads.
 #include <semaphore.h>  //To create semaphores

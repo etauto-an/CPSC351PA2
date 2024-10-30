@@ -9,22 +9,28 @@ void *TA_Activity(void *arg) {
     // TA is currently sleeping.
     sem_wait(&ta_status);
 
-    // lock
+    // Lock to check if office hours are over
+    pthread_mutex_lock(&office_hours_mutex);
+    if (office_hours_over) {
+      pthread_mutex_unlock(&office_hours_mutex);
+      break;  // Break the loop and exit the TA thread
+    }
+    pthread_mutex_unlock(&office_hours_mutex);
+
+    // Lock the shared chairs_count mutex to safely access resources
     pthread_mutex_lock(&mutex);
 
-    // if chairs are empty, break the loop.
+    // If chairs are empty, continue the loop (no student to help)
     if (ChairsCount == 0) {
       pthread_mutex_unlock(&mutex);
       continue;
     }
 
-    // TA gets next student on chair.
+    // TA gets next student on chair
     ChairsCount--;
 
-    // unlock
+    // Unlock the shared resource mutex
     pthread_mutex_unlock(&mutex);
-
-    // TA is currently helping the student
 
     // Signal the next student to come in
     sem_post(&chair[CurrentIndex]);
@@ -36,11 +42,9 @@ void *TA_Activity(void *arg) {
     // Simulate TA helping the student
     sleep(rand() % 5 + 1);
 
-    // hint: use sem_wait(); sem_post(); pthread_mutex_lock();
-    // pthread_mutex_unlock()
-
     // TA is ready for the next student
     sem_post(&next_student);
   }
+
   pthread_exit(NULL);
 }
