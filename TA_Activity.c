@@ -28,6 +28,7 @@ void *TA_Activity(void *arg) {
 
     // TA gets next student on chair
     ChairsCount--;
+    
 
     // Unlock the shared resource mutex
     pthread_mutex_unlock(&mutex);
@@ -35,12 +36,13 @@ void *TA_Activity(void *arg) {
     // Signal the next student to come in
     sem_post(&chair[CurrentIndex]);
 
-    // Update the index to point to the next student waiting (using circular
-    // queue)
-    CurrentIndex = (CurrentIndex + 1) % 3;
+    // Update the index to point to the
 
     // Simulate TA helping the student
-    sleep(rand() % 5 + 1);
+    // sleep(rand() % 5 + 1);
+    sleep(1);  // TEST next student waiting (using circular
+    // queue)
+    //CurrentIndex = (CurrentIndex + 1) % 3;
 
     // TA is ready for the next student
     sem_post(&next_student);

@@ -47,9 +47,9 @@ int main(int argc, char *argv[]) {
     printf("Number of students not specified. Using default (5) students.\n");
     number_of_students = 5;
   } else {
+    number_of_students = atoi(argv[1]);
     printf("Number of students specified. Creating %d threads.\n",
            number_of_students);
-    number_of_students = atoi(argv[1]);
   }
 
   // Allocate memory for Students
@@ -62,7 +62,8 @@ int main(int argc, char *argv[]) {
   }
 
   // Simulate end of office hours after a while (for testing purposes)
-  sleep(20);  // Simulate office hours duration
+  // sleep(20);  // Simulate office hours duration
+  sleep(5);  // TEST
   pthread_mutex_lock(&office_hours_mutex);
   office_hours_over = 1;  // Set office hours to over
   pthread_mutex_unlock(&office_hours_mutex);
