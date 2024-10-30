@@ -2,6 +2,7 @@
 #include <semaphore.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
 
 #include "Student.h"
 #include "TA_Activity.h"
@@ -14,8 +15,8 @@ pthread_mutex_t office_hours_mutex;  // Mutex to protect office_hours_over
 pthread_cond_t office_hours_cond =
     PTHREAD_COND_INITIALIZER;  // Condition variable to signal end of office
                                // hours
-int chairs_count = 0;          // Number of waiting students
-int current_index = 0;         // Index of the next waiting student
+int ChairsCount = 0;           // Number of waiting students
+int CurrentIndex = 0;          // Index of the next waiting student
 int office_hours_over =
     0;  // 0 means office hours are ongoing, 1 means office hours are over
 

@@ -7,8 +7,11 @@ CFLAGS = -Wall -pthread
 # Executable name
 TARGET = sleeping_ta
 
-# Source files
-SRCS = TA.c TA_Activity.c Student.c TA_Activity.h Student.h
+# Source files (.c files only)
+SRCS = TA.c TA_Activity.c Student.c
+
+# Header files (not used for compiling to .o)
+HDRS = TA_Activity.h Student.h
 
 # Object files
 OBJS = $(SRCS:.c=.o)
@@ -23,7 +26,7 @@ $(TARGET): $(OBJS)
 
 # Rule to format all source files using clang-format
 format:
-	clang-format -style=Google -i $(SRCS)
+	clang-format -style=Google -i $(SRCS) $(HDRS)
 
 # Clean up compiled files
 clean:
