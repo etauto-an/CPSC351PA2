@@ -8,7 +8,7 @@ CFLAGS = -Wall -pthread
 TARGET = sleeping_ta
 
 # Source files
-SRCS = main.c ta.c student.c
+SRCS = TA.c TA_Activity.c Student.c TA_Activity.h Student.h
 
 # Object files
 OBJS = $(SRCS:.c=.o)
@@ -20,6 +20,10 @@ $(TARGET): $(OBJS)
 # Rule to compile individual .c files into .o files
 %.o: %.c
 	$(CC) $(CFLAGS) -c $< -o $@
+
+# Rule to format all source files using clang-format
+format:
+	clang-format -style=Google -i $(SRCS)
 
 # Clean up compiled files
 clean:

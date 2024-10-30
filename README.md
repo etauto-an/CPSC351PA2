@@ -30,5 +30,5 @@ To compile and run the program using `make` with the `gcc` compiler, the followi
 - Ensure that the -pthread flag is used during compilation.
 - The library is usually included by default in the GNU C Library (glibc)
 
-## How to run:
+# How to run:
 directions
