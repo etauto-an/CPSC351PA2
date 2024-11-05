@@ -12,10 +12,10 @@ pthread_t *students;                 // N threads running as Students
 pthread_t ta;                        // Separate thread for TA
 pthread_mutex_t mutex;               // Mutex for shared resources
 pthread_mutex_t office_hours_mutex;  // Mutex to protect office_hours_over
-pthread_cond_t office_hours_cond =
-    PTHREAD_COND_INITIALIZER;  // Condition variable to signal end of office
+//pthread_cond_t office_hours_cond =
+//    PTHREAD_COND_INITIALIZER;  // Condition variable to signal end of office
                                // hours
-int ChairsCount = 0;           // Number of waiting students
+int StudentsWaiting = 0;           // Number of waiting students
 int CurrentIndex = 0;          // Index of the next waiting student
 int office_hours_over =
     0;  // 0 means office hours are ongoing, 1 means office hours are over
@@ -24,6 +24,7 @@ int office_hours_over =
 sem_t ta_status;     // Semaphore for TA sleep/wake
 sem_t chair[3];      // Semaphore array for chairs
 sem_t next_student;  // Semaphore for next student
+sem_t ta_chair;
 
 int main(int argc, char *argv[]) {
   int number_of_students = 0;  // A variable taken from the user to create
@@ -38,6 +39,7 @@ int main(int argc, char *argv[]) {
         1);  // Initialize semaphore array elements as 1 - Chair is available
   }
   sem_init(&next_student, 0, 0);  // Initialize as 0 - No students waiting
+  sem_init(&ta_chair, 0, 0);
 
   // Initialize mutex locks
   pthread_mutex_init(&mutex, NULL);
@@ -61,6 +63,7 @@ int main(int argc, char *argv[]) {
     pthread_create(&students[i], NULL, Student_Activity, (void *)(__intptr_t)i);
   }
 
+  /**
   // Simulate end of office hours after a while (for testing purposes)
   // sleep(20);  // Simulate office hours duration
   sleep(5);  // TEST
@@ -70,6 +73,7 @@ int main(int argc, char *argv[]) {
   pthread_cond_broadcast(&office_hours_cond);  // Wake up all threads waiting
                                                // for office hours to end
   sem_post(&ta_status);                        // Wake up the TA if sleeping
+  **/
 
   // Waiting for TA thread and N Student threads
   pthread_join(ta, NULL);
@@ -83,12 +87,17 @@ int main(int argc, char *argv[]) {
 
   // Destroy semaphores
   sem_destroy(&ta_status);
+  sem_destroy(&ta_chair);
+
   sem_destroy(&next_student);
+
   for (int i = 0; i < 3; i++) {
     sem_destroy(&chair[i]);
   }
 
   // Free allocated memory
   free(students);
+
+  printf("Program END\n");
   return 0;
 }

@@ -5,48 +5,43 @@
 #include <unistd.h>
 
 void *TA_Activity(void *arg) {
-  while (1) {
-    // TA is currently sleeping.
-    sem_wait(&ta_status);
+    while (1) {
+        // Check if office hours are over
+        pthread_mutex_lock(&office_hours_mutex);
+        if (office_hours_over) {
+            pthread_mutex_unlock(&office_hours_mutex);
+            break;  // End the loop if office hours are over
+        }
+        pthread_mutex_unlock(&office_hours_mutex);
 
-    // Lock to check if office hours are over
-    pthread_mutex_lock(&office_hours_mutex);
-    if (office_hours_over) {
-      pthread_mutex_unlock(&office_hours_mutex);
-      break;  // Break the loop and exit the TA thread
+        // TA is currently sleeping, waits for a student to wake them up
+        printf("TA SLEEPING\n");
+        sem_wait(&ta_status);  // Wait for a student to signal the TA
+        printf("TA AWAKE\n");
+
+        // Lock the shared chairs_count mutex to safely access resources
+        pthread_mutex_lock(&mutex);
+
+        // Check if there are students waiting
+        if (StudentsWaiting > 0) {
+            StudentsWaiting--;  // Decrement chairs count as TA is helping a student
+            printf("TA: StudentsWaiting is now %d.\n", StudentsWaiting);
+
+            // Signal the student to enter the office
+            sem_post(&ta_chair);
+            printf("TA signals a student to enter the office.\n");
+        } else {
+            pthread_mutex_unlock(&mutex);
+            break;  // End the TA loop if no students are waiting
+        }
+
+        pthread_mutex_unlock(&mutex);
+
+        // Simulate helping the student
+        sleep(1);  // Simulate time spent helping
+        printf("TA finished helping a student and is ready for the next one.\n");
     }
-    pthread_mutex_unlock(&office_hours_mutex);
 
-    // Lock the shared chairs_count mutex to safely access resources
-    pthread_mutex_lock(&mutex);
-
-    // If chairs are empty, continue the loop (no student to help)
-    if (ChairsCount == 0) {
-      pthread_mutex_unlock(&mutex);
-      continue;
-    }
-
-    // TA gets next student on chair
-    ChairsCount--;
-    
-
-    // Unlock the shared resource mutex
-    pthread_mutex_unlock(&mutex);
-
-    // Signal the next student to come in
-    sem_post(&chair[CurrentIndex]);
-
-    // Update the index to point to the
-
-    // Simulate TA helping the student
-    // sleep(rand() % 5 + 1);
-    sleep(1);  // TEST next student waiting (using circular
-    // queue)
-    //CurrentIndex = (CurrentIndex + 1) % 3;
-
-    // TA is ready for the next student
-    sem_post(&next_student);
-  }
-
-  pthread_exit(NULL);
+    printf("Office hours over. \n");
+    pthread_exit(NULL);
 }
