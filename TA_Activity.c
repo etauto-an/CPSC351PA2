@@ -15,9 +15,12 @@ void *TA_Activity(void *arg) {
         pthread_mutex_unlock(&office_hours_mutex);
 
         // TA is currently sleeping, waits for a student to wake them up
-        printf("TA SLEEPING\n");
+        printf("TA IS SLEEPING\n");
         sem_wait(&ta_status);  // Wait for a student to signal the TA
-        printf("TA AWAKE\n");
+
+        /****WAITING FOR STUDENT TO CALL sem_post(&ta_status)****/
+
+        printf("TA IS AWAKE\n");
 
         // Lock the shared chairs_count mutex to safely access resources
         pthread_mutex_lock(&mutex);
@@ -25,11 +28,11 @@ void *TA_Activity(void *arg) {
         // Check if there are students waiting
         if (StudentsWaiting > 0) {
             StudentsWaiting--;  // Decrement chairs count as TA is helping a student
-            printf("TA: StudentsWaiting is now %d.\n", StudentsWaiting);
 
             // Signal the student to enter the office
             sem_post(&ta_chair);
             printf("TA signals a student to enter the office.\n");
+            printf("TA: StudentsWaiting is now %d.\n", StudentsWaiting);
         } else {
             pthread_mutex_unlock(&mutex);
             break;  // End the TA loop if no students are waiting

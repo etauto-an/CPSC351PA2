@@ -25,6 +25,9 @@ void *Student_Activity(void *threadID) {
 
         // Student waits for the TA's signal to enter the office
         sem_wait(&ta_chair);
+
+        /****WAITING FOR TA TO CALL sem_post(&ta_chair)****/
+
         printf("Student %d enters the office.\n", (int)(__intptr_t)threadID);
 
         // Simulate getting help from the TA
