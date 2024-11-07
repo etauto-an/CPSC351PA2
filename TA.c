@@ -8,23 +8,24 @@
 pthread_t *Students;  // N threads running as Students.
 pthread_t TA;         // Separate Thread for TA.
 
-int students_waiting = 0;   	// Number of waiting students
-int next_waiting_index = 0; 	// Index of next student in line
-int available_seat_index = 0; // Index where the next arriving student will wait
+int students_waiting = 0;    // Number of waiting students
+int next_waiting_index = 0;  // Index of next student in line
+int available_seat_index =
+    0;  // Index where the next arriving student will wait
 int ta_awake = 0;
 
 int office_hours_over = 0;  // 0 = office hours are ongoing
-														// 1 = office hours are over
+                            // 1 = office hours are over
 
 // A semaphore to control TA's sleep.
-sem_t ta_status; 		  // (0 = ASLEEP | 1 = AWAKE)
+sem_t ta_status;  // (0 = ASLEEP | 1 = AWAKE)
 
 // An array of 3 semaphores to control the availability of the chairs outside of
 // the office.
-sem_t chair[3]; 		  // (0 = OCCUPIED | 1 = AVAILABLE)
+sem_t chair[3];  // (0 = OCCUPIED | 1 = AVAILABLE)
 
 // A semaphore to ensure the students enter the office 1 at a time.
-sem_t ta_chair_ready; // (0 = OCCUPIED | 1 = AVAILABLE)
+sem_t ta_chair_ready;  // (0 = OCCUPIED | 1 = AVAILABLE)
 
 // A mutex to control changes to students_waiting.
 pthread_mutex_t sw_mutex;
@@ -40,33 +41,31 @@ void *Student_Activity(void *threadID);
 void test_Student_Activity();
 
 int main(int argc, char *argv[]) {
-	// User-defined number of student threads to create. (DEFAULT = 5)
+  // User-defined number of student threads to create. (DEFAULT = 5)
   int number_of_students = 0;
-  //int id = 0;  // ID to distinguish between student threads
+  // int id = 0;  // ID to distinguish between student threads
   srand(time(NULL));
 
-	// Initialize semaphores and mutexes
-  sem_init(&ta_status, 0, 0);  // TA is initially asleep
-  sem_init(&ta_chair_ready, 0, 0);  // TA chair is initially unavailable
+  // Initialize semaphores and mutexes
+  sem_init(&ta_status, 0, 0);       // TA is initially asleep
+  sem_init(&ta_chair_ready, 0, 1);  // TA chair is initially available
   for (int i = 0; i < 3; i++) {
-    sem_init(
-        &chair[i], 0, 1);  // Each chair outside is initially available
+    sem_init(&chair[i], 0, 1);  // Each chair outside is initially available
   }
   pthread_mutex_init(&sw_mutex, NULL);
   pthread_mutex_init(&oho_mutex, NULL);
 
+  //  test_TA_Activity();
+  //  test_Student_Activity();
 
-	//  test_TA_Activity();
-	//  test_Student_Activity();
-
-	// Capture user input
+  // Capture user input
   if (argc < 2) {
     printf("Number of Students not specified. Using default (5) students.\n");
     number_of_students = 5;
   } else {
+    number_of_students = atoi(argv[1]);
     printf("Number of Students specified. Creating %d threads.\n",
            number_of_students);
-    number_of_students = atoi(argv[1]);
   }
 
   // Allocate memory for Students
@@ -79,13 +78,15 @@ int main(int argc, char *argv[]) {
   }
 
   // Simulate end of office hours after a while (for testing purposes)
-  sleep(10);  // Simulate office hours duration
+  sleep(15);  // Simulate office hours duration
   pthread_mutex_lock(&oho_mutex);
   office_hours_over = 1;  // Set office hours to over
   pthread_mutex_unlock(&oho_mutex);
   sem_post(&ta_status);  // Wake up the TA if sleeping
+  printf("Test\n");
 
-	// Cleanup semaphores and mutexes
+  
+  // Cleanup semaphores and mutexes
   sem_destroy(&ta_status);
   sem_destroy(&ta_chair_ready);
   for (int i = 0; i < 3; i++) {
@@ -97,6 +98,6 @@ int main(int argc, char *argv[]) {
   // Free allocated memory
   free(Students);
 
-	printf("PROGRAM END.\n");
+  printf("PROGRAM END.\n");
   return 0;
 }
