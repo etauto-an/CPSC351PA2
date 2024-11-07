@@ -4,13 +4,8 @@
 #include <pthread.h>
 
 // Shared declarations
-extern pthread_mutex_t mutex;
-
-extern pthread_mutex_t office_hours_mutex;
-extern pthread_cond_t office_hours_cond;
-extern int StudentsWaiting;
-extern int CurrentIndex;
-extern int office_hours_over;
+extern pthread_mutex_t sw_mutex;
+extern pthread_mutex_t oho_mutex;
 
 // Function prototype for Student activity
 void *Student_Activity(void *threadID);

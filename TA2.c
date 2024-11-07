@@ -100,3 +100,27 @@ int main(int argc, char *argv[]) {
 	printf("PROGRAM END.\n");
   return 0;
 }
+
+//// TEST FUNCTIONS
+//
+//void test_TA_Activity() {
+//    // Simulate a few students arriving
+//    students_waiting = 3;  // Simulate 3 students waiting initially
+//
+//    // Manually initialize the semaphore for each chair to simulate students waiting
+//    for (int i = 0; i < 3; i++) {
+//        sem_wait(&chair[i]);  // Pretend each chair is occupied by a waiting student
+//    }
+//
+//    // Signal the TA to wake up for each student, simulating students arriving sequentially
+//    for (int i = 0; i < 3; i++) {
+//        sem_post(&ta_status);  // Mimic a student waking up the TA for each student	
+//    }
+//
+//    // Run TA_Activity to see how it handles the simulated students
+//    TA_Activity();
+//}
+//
+//void test_Student_Activity() {
+//
+//}

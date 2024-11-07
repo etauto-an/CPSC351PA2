@@ -5,10 +5,11 @@ CC = gcc
 CFLAGS = -Wall -pthread
 
 # Executable name
-TARGET = sleeping_ta
+TARGET = ta	
 
 # Source files (.c files only)
-SRCS = TA.c TA_Activity.c Student.c
+SRCS = TA.c TA_Activity.c Student.c 
+#SRCS = TA2.c
 
 # Header files (not used for compiling to .o)
 HDRS = TA_Activity.h Student.h
