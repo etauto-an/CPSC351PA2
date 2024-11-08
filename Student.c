@@ -56,6 +56,8 @@ void *Student_Activity(void *threadID) {
     // If no chair is available, student leaves to return later
     printf("Student %d found no available chair and will return later.\n",
            (int)(__intptr_t)threadID);
+    printf ("\n");
+
     pthread_mutex_unlock(&sw_mutex);  // Correctly unlock sw_mutex in this path
     pthread_exit(NULL);
   }

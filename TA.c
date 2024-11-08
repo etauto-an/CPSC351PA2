@@ -83,8 +83,6 @@ int main(int argc, char *argv[]) {
   office_hours_over = 1;  // Set office hours to over
   pthread_mutex_unlock(&oho_mutex);
   sem_post(&ta_status);  // Wake up the TA if sleeping
-  printf("Test\n");
-
   
   // Cleanup semaphores and mutexes
   sem_destroy(&ta_status);

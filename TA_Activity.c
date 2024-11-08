@@ -16,12 +16,14 @@ void *TA_Activity() {
         pthread_mutex_unlock(&oho_mutex);
 
         // Block TA thread until a student arrives
-        printf("TA is sleeping\n");
-
         printf("TA - students_waiting: %d. \n", students_waiting);
         printf ("\n");
 
+        if (ta_awake == 0) {
+        printf("TA is sleeping\n");
         sem_wait(&ta_status);
+        }
+
         printf("TA is awake\n");
 
         // Check if there are students waiting
