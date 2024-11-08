@@ -27,7 +27,7 @@ void *Student_Activity(void *threadID) {
            available_seat_index);
     students_waiting++;
     printf("S - students_waiting: %d\n", students_waiting);
-    printf ("\n");
+    printf("\n");
 
     if (ta_awake == 0) {
       ta_awake = 1;
@@ -50,13 +50,13 @@ void *Student_Activity(void *threadID) {
     printf("Student %d has finished and is leaving the TA's office.\n",
            (int)(__intptr_t)threadID);
     printf("S - students_waiting: %d\n", students_waiting);
-    printf ("\n");
+    printf("\n");
 
   } else {
     // If no chair is available, student leaves to return later
     printf("Student %d found no available chair and will return later.\n",
            (int)(__intptr_t)threadID);
-    printf ("\n");
+    printf("\n");
 
     pthread_mutex_unlock(&sw_mutex);  // Correctly unlock sw_mutex in this path
     pthread_exit(NULL);

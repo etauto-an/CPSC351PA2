@@ -83,7 +83,8 @@ int main(int argc, char *argv[]) {
   office_hours_over = 1;  // Set office hours to over
   pthread_mutex_unlock(&oho_mutex);
   sem_post(&ta_status);  // Wake up the TA if sleeping
-  
+  printf("OFFICE HOURS ARE OVER.\n");
+
   // Cleanup semaphores and mutexes
   sem_destroy(&ta_status);
   sem_destroy(&ta_chair_ready);
@@ -96,6 +97,5 @@ int main(int argc, char *argv[]) {
   // Free allocated memory
   free(Students);
 
-  printf("PROGRAM END.\n");
   return 0;
 }
