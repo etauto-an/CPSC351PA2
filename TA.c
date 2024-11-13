@@ -35,10 +35,7 @@ pthread_mutex_t oho_mutex;
 
 // Declared Functions
 void *TA_Activity();
-void test_TA_Activity();
-
 void *Student_Activity(void *threadID);
-void test_Student_Activity();
 
 int main(int argc, char *argv[]) {
   // User-defined number of student threads to create. (DEFAULT = 5)
@@ -55,16 +52,13 @@ int main(int argc, char *argv[]) {
   pthread_mutex_init(&sw_mutex, NULL);
   pthread_mutex_init(&oho_mutex, NULL);
 
-  //  test_TA_Activity();
-  //  test_Student_Activity();
-
   // Capture user input
   if (argc < 2) {
     printf("Number of Students not specified. Using default (5) students.\n");
     number_of_students = 5;
   } else {
     number_of_students = atoi(argv[1]);
-    printf("Number of Students specified. Creating %d threads.\n",
+    printf("Number of Students specified. Creating %d threads.\n\n",
            number_of_students);
   }
 

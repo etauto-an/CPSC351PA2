@@ -1,13 +1,12 @@
 #include "TA_Activity.h"
 
 #include <stdio.h>
-#include <stdlib.h>
 #include <unistd.h>
 
 void *TA_Activity() {
   while (1) {
     // Check if office hours are over
-    printf("TA - CHECKING FOR OFFICE HOURS\n");
+    //printf("TA - CHECKING FOR OFFICE HOURS\n");
     pthread_mutex_lock(&oho_mutex);
     if (office_hours_over) {
       pthread_mutex_unlock(&oho_mutex);
@@ -16,8 +15,6 @@ void *TA_Activity() {
     pthread_mutex_unlock(&oho_mutex);
 
     // Block TA thread until a student arrives
-    printf("TA - students_waiting: %d. \n\n", students_waiting);
-
     if (ta_awake == 0) {
       printf("TA - TA is sleeping\n");
       printf("TA - TA THREAD BLOCKED\n\n");
@@ -26,6 +23,7 @@ void *TA_Activity() {
     }
 
     printf("TA - TA is awake\n");
+    printf("TA - students_waiting: %d. \n\n", students_waiting);
 
     // Check if there are students waiting
     pthread_mutex_lock(&sw_mutex);
@@ -38,7 +36,7 @@ void *TA_Activity() {
       //sem_post(&chair[next_waiting_index]);   
       printf("TA - Seat %d is now open.\n", next_waiting_index);
 
-      printf("TA - NEXT AVAILABLE SEAT: %d\n",available_seat_index);
+      //printf("TA - NEXT AVAILABLE SEAT: %d\n",available_seat_index);
 
       // Update number of students waiting
       students_waiting--;

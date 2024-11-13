@@ -8,15 +8,15 @@
 extern pthread_mutex_t sw_mutex;
 extern pthread_mutex_t oho_mutex;
 
+extern sem_t ta_status;
+extern sem_t chair[3];
+extern sem_t ta_chair_ready;
+
 extern int students_waiting;
 extern int next_waiting_index;
 extern int available_seat_index;
 extern int ta_awake;
 extern int office_hours_over;
-
-extern sem_t ta_status;
-extern sem_t chair[3];
-extern sem_t ta_chair_ready;
 
 // Function prototype for TA activity
 void *TA_Activity();
