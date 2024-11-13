@@ -72,7 +72,7 @@ int main(int argc, char *argv[]) {
   }
 
   // Simulate end of office hours after a while (for testing purposes)
-  sleep(10);  // Simulate office hours duration
+  sleep(20);  // Simulate office hours duration
   pthread_mutex_lock(&oho_mutex);
   office_hours_over = 1;  // Set office hours to over
   pthread_mutex_unlock(&oho_mutex);

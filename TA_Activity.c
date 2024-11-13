@@ -34,23 +34,22 @@ void *TA_Activity() {
 
       // Free up the specific chair outside for the next student
       //sem_post(&chair[next_waiting_index]);   
-      printf("TA - Seat %d is now open.\n", next_waiting_index);
+      //printf("TA - Seat %d is now open.\n", next_waiting_index);
 
       //printf("TA - NEXT AVAILABLE SEAT: %d\n",available_seat_index);
 
       // Update number of students waiting
       students_waiting--;
-      printf("TA - students_waiting: %d. \n\n", students_waiting);
+      printf("TA - students_waiting: %d. \n", students_waiting);
 
       // Update next_waiting_index
       next_waiting_index = (next_waiting_index + 1) % 3;
-      printf("TA - Next student is at chair %d.\n", next_waiting_index);
+      //printf("TA - Next student is at chair %d.\n", next_waiting_index);
       pthread_mutex_unlock(&sw_mutex);
 
       // TA is currently helping the student
-      printf("TA - Door is closed\n\n");
+      printf("TA - TA is helping the student.\n\n");
       sleep(2);  // Simulate helping the student
-      printf("TA has finished helping the student.\n");
 
       // Signal that the TA office chair is available for the next student
       sem_post(&ta_chair_ready);

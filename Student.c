@@ -7,7 +7,7 @@
 #include "TA_Activity.h"
 
 void *Student_Activity(void *threadID) {
-  sleep(rand() % 5);
+  sleep(1 + (int)(__intptr_t)threadID );
   // Check if office hours are ongoing
   pthread_mutex_lock(&oho_mutex);
   if (office_hours_over) {
@@ -20,24 +20,26 @@ void *Student_Activity(void *threadID) {
 
   // Student needs help from the TA
   printf("S - Student %d needs help from the TA.\n", (int)(__intptr_t)threadID);
+  printf("S - students_waiting: %d\n\n", students_waiting);
+
 
   pthread_mutex_lock(&sw_mutex);
   // Student tries to sit on a chair
   if (students_waiting < 3) {
     printf("S - Student %d takes seat %d.\n", (int)(__intptr_t)threadID,
            available_seat_index);
+    students_waiting++;
+    printf("S - students_waiting: %d\n\n", students_waiting);
   
     sem_wait(&chair[available_seat_index]);
 
     available_seat_index = (available_seat_index + 1) % 3;
-    printf("S - Next available seat is at index: %d\n", available_seat_index);
-    students_waiting++;
-    printf("S - students_waiting: %d\n\n", students_waiting);
+    //printf("S - Next available seat is at index: %d\n", available_seat_index);
 
     if (ta_awake == 0) {
       ta_awake = 1;
       sem_post(&ta_status);  // Wake up the TA
-      printf("S - Student %d wakes up the TA\n\n", (int)(__intptr_t)threadID);
+      printf("S - Student %d wakes up the TA\n\n", (int)(__intptr_t)threadID);  
     }
     pthread_mutex_unlock(&sw_mutex);
 
