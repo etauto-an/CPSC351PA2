@@ -6,7 +6,6 @@
 void *TA_Activity() {
   while (1) {
     // Check if office hours are over
-    // printf("TA - CHECKING FOR OFFICE HOURS\n");
     pthread_mutex_lock(&oho_mutex);
     if (office_hours_over) {
       pthread_mutex_unlock(&oho_mutex);
@@ -15,7 +14,7 @@ void *TA_Activity() {
     pthread_mutex_unlock(&oho_mutex);
 
     // Wait for a student to signal that they need help
-    printf("TA(%d) - Checking for students.....\n\n", students_waiting);
+    printf("TA(%d) - TA is sleeping.\n\n", students_waiting);
     printf("TA THREAD BLOCKED\n\n");
     sem_wait(&ta_status);  // TA waits here until a student signal
 

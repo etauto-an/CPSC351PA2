@@ -18,8 +18,7 @@ int office_hours_over = 0;     // Office hours status (0 = ongoing, 1 = over)
 
 // Semaphores
 sem_t ta_status;  // Controls TA's sleep/wake status (0 = asleep, 1 = awake)
-sem_t
-    ta_ready;  // Ensures only one student can enter the office at a time
+sem_t ta_ready;  // Ensures only one student can enter the office at a time
 
 sem_t chair[3];  // Array for the 3 waiting chairs (0 = occupied, 1 = available)
 
@@ -39,7 +38,7 @@ int main(int argc, char *argv[]) {
 
   // Initialize semaphores and mutexes
   sem_init(&ta_status, 0, 0);       // TA initially asleep (semaphore value 0)
-  sem_init(&ta_ready, 0, 1);  // TA chair is available (semaphore value 1)
+  sem_init(&ta_ready, 0, 0);  // TA chair is available (semaphore value 1)
 
 
   for (int i = 0; i < 3; i++) {
