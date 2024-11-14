@@ -10,7 +10,7 @@ extern pthread_mutex_t oho_mutex;
 
 extern sem_t ta_status;
 extern sem_t chair[3];
-extern sem_t ta_chair_ready;
+extern sem_t ta_ready;
 
 extern int students_waiting;
 extern int next_waiting_index;

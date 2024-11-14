@@ -6,7 +6,7 @@
 void *TA_Activity() {
   while (1) {
     // Check if office hours are over
-    //printf("TA - CHECKING FOR OFFICE HOURS\n");
+    // printf("TA - CHECKING FOR OFFICE HOURS\n");
     pthread_mutex_lock(&oho_mutex);
     if (office_hours_over) {
       pthread_mutex_unlock(&oho_mutex);
@@ -14,53 +14,43 @@ void *TA_Activity() {
     }
     pthread_mutex_unlock(&oho_mutex);
 
-    // Block TA thread until a student arrives
-    if (ta_awake == 0) {
-      printf("TA - TA is sleeping\n");
-      printf("TA - TA THREAD BLOCKED\n\n");
+    // Wait for a student to signal that they need help
+    printf("TA(%d) - Checking for students.....\n\n", students_waiting);
+    printf("TA THREAD BLOCKED\n\n");
+    sem_wait(&ta_status);  // TA waits here until a student signal
 
-      sem_wait(&ta_status);
-    }
-
-    printf("TA - TA is awake\n");
-    printf("TA - students_waiting: %d. \n\n", students_waiting);
+    // TA has been woken up by a student
+    printf("TA(%d) - TA is awake and ready to help.\n", students_waiting);
 
     // Check if there are students waiting
     pthread_mutex_lock(&sw_mutex);
     if (students_waiting > 0) {
       // Signal next waiting student to enter the office
-      printf("TA - TA SIGNALS the next student from chair: %d.\n",
-             next_waiting_index);
+      printf("TA(%d)-TA SIGNALS the next student from chair: %d.\n",
+             students_waiting, next_waiting_index);
 
-      // Free up the specific chair outside for the next student
-      //sem_post(&chair[next_waiting_index]);   
-      //printf("TA - Seat %d is now open.\n", next_waiting_index);
+      sem_post(&ta_ready);
 
-      //printf("TA - NEXT AVAILABLE SEAT: %d\n",available_seat_index);
-
-      // Update number of students waiting
+      // Update number of students waiting and index
       students_waiting--;
-      printf("TA - students_waiting: %d. \n", students_waiting);
-
-      // Update next_waiting_index
       next_waiting_index = (next_waiting_index + 1) % 3;
-      //printf("TA - Next student is at chair %d.\n", next_waiting_index);
+
       pthread_mutex_unlock(&sw_mutex);
 
-      // TA is currently helping the student
-      printf("TA - TA is helping the student.\n\n");
-      sleep(2);  // Simulate helping the student
+      // Help the student (simulate with sleep)
+      printf("TA(%d) - TA is helping the student.\n\n", students_waiting);
+      sleep(2);
 
-      // Signal that the TA office chair is available for the next student
-      sem_post(&ta_chair_ready);
-      printf("TA is ready for the next student.\n");
-      printf("TA - students_waiting: %d. \n\n", students_waiting);
+      // Signal that the TA chair is now available
+      printf("TA(%d) - Ready for the next student.\n\n", students_waiting);
 
     } else {
       // No students waiting.
-      printf("TA - No students waiting. TA goes back to sleep.\n");
+      printf("TA(%d)-No students waiting. TA goes back to sleep\n\n",
+             students_waiting);
       pthread_mutex_unlock(&sw_mutex);
-      break;
+      continue;
+      ;
     }
   }
   pthread_exit(NULL);

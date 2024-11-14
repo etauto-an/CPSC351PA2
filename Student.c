@@ -7,68 +7,64 @@
 #include "TA_Activity.h"
 
 void *Student_Activity(void *threadID) {
-  sleep(1 + (int)(__intptr_t)threadID );
-  // Check if office hours are ongoing
-  pthread_mutex_lock(&oho_mutex);
-  if (office_hours_over) {
-    pthread_mutex_unlock(&oho_mutex);
-    printf("S - Office hours are over. Student %d is leaving.\n",
-           (int)(__intptr_t)threadID);
-    pthread_exit(NULL);
-  }
-  pthread_mutex_unlock(&oho_mutex);
+  int id = (int)(__intptr_t)threadID;  // Get student ID from thread argument
 
-  // Student needs help from the TA
-  printf("S - Student %d needs help from the TA.\n", (int)(__intptr_t)threadID);
-  printf("S - students_waiting: %d\n\n", students_waiting);
+  // Announce that the student needs help
+  printf("S(%d) - Student %d needs help from the TA.\n", students_waiting, id);
 
+  pthread_mutex_lock(&sw_mutex);  // Lock to modify shared variables
 
-  pthread_mutex_lock(&sw_mutex);
-  // Student tries to sit on a chair
-  if (students_waiting < 3) {
-    printf("S - Student %d takes seat %d.\n", (int)(__intptr_t)threadID,
+  // Check if there's an available chair in the waiting area
+  if (students_waiting < 3) {  // If less than 3 students are waiting
+    // The student takes a seat
+    printf("S(%d) - Student %d takes seat %d.\n", students_waiting, id,
            available_seat_index);
+
+    // Increment the number of students waiting
     students_waiting++;
-    printf("S - students_waiting: %d\n\n", students_waiting);
-  
+
+    // Occupy the current available seat and update the `available_seat_index`
     sem_wait(&chair[available_seat_index]);
-
     available_seat_index = (available_seat_index + 1) % 3;
-    //printf("S - Next available seat is at index: %d\n", available_seat_index);
 
-    if (ta_awake == 0) {
-      ta_awake = 1;
-      sem_post(&ta_status);  // Wake up the TA
-      printf("S - Student %d wakes up the TA\n\n", (int)(__intptr_t)threadID);  
-    }
-    pthread_mutex_unlock(&sw_mutex);
+    // Signal the TA that a student is waiting
+    sem_post(&ta_status);  // Wake up the TA if they are asleep
+
+    pthread_mutex_unlock(&sw_mutex);  // Unlock after updating shared variables
 
     // Student waits to be called into the TA’s office
-    printf("S - STUDENT THREAD %d BLOCKED\n\n", (int)(__intptr_t)threadID);
-    sem_wait(&ta_chair_ready);
+    printf("S(%d) - Student %d is waiting to be called into the TA's office.\n\n",
+           students_waiting, id);
 
-    // The student now leaves their chair and goes into the TA’s office
-    sem_post(&chair[available_seat_index]);
+    printf("STUDENT %d THREAD BLOCKED\n\n", id);
+    sem_wait(&ta_ready);  // Wait until the TA signals that they are ready
+                                // to help this student
+                                
+    // The student is called in, so they leave their chair
+    printf("S(%d) - Student %d leaves seat %d and enters the TA's office.\n",
+           students_waiting, id, next_waiting_index);
 
-    //printf("S - Student %d is getting help from the TA.\n\n",
-    //       (int)(__intptr_t)threadID);
+    // Free up the seat that the student was sitting in, allowing another
+    // student to use it
+    sem_post(&chair[next_waiting_index]);
 
-    // Simulate time spent getting help (optional)
-    sleep(1);
+    // Simulate time spent in the TA’s office
+    sleep(1);  // Adjust sleep duration as needed for testing
 
-    // After receiving help, student leaves the TA's office
-    printf("S - Student %d has finished and is leaving the TA's office.\n",
-           (int)(__intptr_t)threadID);
-    printf("S - students_waiting: %d\n\n", students_waiting);
+    // The student has finished and leaves the TA's office
+    printf("S(%d) - Student %d has finished and is leaving the TA's office.\n\n",
+           students_waiting, id);
 
   } else {
-    // If no chair is available, student leaves to return later
-    printf("S - Student %d found no available chair and will return later.\n\n",
-           (int)(__intptr_t)threadID);
+    // No available chairs, so the student leaves to try again later
+    printf(
+        "S(%d) - Student %d found no available chair and will return later.\n\n",
+        students_waiting, id);
 
-    pthread_mutex_unlock(&sw_mutex);  // Correctly unlock sw_mutex in this path
-    pthread_exit(NULL);
+    // Unlock the mutex in this path as well
+    pthread_mutex_unlock(&sw_mutex);
+    pthread_exit(NULL);  // End this thread as the student is leaving
   }
 
-  pthread_exit(NULL);
+  pthread_exit(NULL);  // End the student thread after receiving help
 }

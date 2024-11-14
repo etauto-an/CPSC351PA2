@@ -8,8 +8,8 @@ CFLAGS = -Wall -pthread
 TARGET = ta	
 
 # Source files (.c files only)
-SRCS = TA.c TA_Activity.c Student.c 
-#SRCS = TA2.c
+SRCS = TA.c TA_Activity.c Student.c
+#SRCS = sample.c
 
 # Header files (not used for compiling to .o)
 HDRS = TA_Activity.h Student.h
